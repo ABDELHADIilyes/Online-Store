@@ -26,7 +26,7 @@
 </html>
 
 <?php
-include 'db.php';
+include 'functions.php';
 /*
 $fullname  = $_POST['family_n'];
 $username  = $_POST['name'];
@@ -86,6 +86,14 @@ if(!empty($_POST['submit'])){
     }
 
 
+}
+
+if(isset($_GET)){
+    extract($_GET);
+
+   $account = selectAccount($db,$email);
+
+   echo "name : " . $account->name;
 }
 
 

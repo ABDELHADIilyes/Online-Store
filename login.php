@@ -1,3 +1,34 @@
+<?php
+
+include_once 'sessions.php';
+include_once 'db.php';
+
+if(!empty($_POST['submit'])){
+   $username = $_POST['username'];
+   $passwrd = $_POST['password'];
+ if(!empty($username) && !empty($passwrd)){
+   $sql = "SELECT user_id,Fname,name,email from user where email = ? and password = ?";
+   $qry = $db->prepare($sql);
+   $res = $qry->execute([$username,sha1($passwrd)]);
+   $row = $qry->fetch(PDO::FETCH_OBJ);
+
+   if ($qry->rowCount() === 1)
+   {
+      $_SESSION['user_id'] = $row->user_id;
+      $_SESSION['fname'] = $row->Fname;
+      $_SESSION['name'] = $row->name;
+      $_SESSION['email'] = $row->email;
+      $_SESSION['msg'] = "<div style='color: green;'>Welcome, $row->name</div>";
+      header("Location: profile.php");
+   }
+   else
+   {
+      $msg = "Bad email / password";
+   }
+ }
+}
+?>
+
 <!doctype html>
 
 <html lang="en"> 
@@ -15,31 +46,30 @@
 
      <h2>Sign In</h2> 
 
-     <div class="form"> 
+     <form method="POST" class="form"> 
+      <div class="inputBox"> 
+
+       <input name="username" type="text" required> <i>Username</i> 
+
+      </div> 
+      <?= isset($msg) ? $msg : "" ;?>
+      <div class="inputBox"> 
+
+       <input name="password" type="password" required> <i>Password</i> 
+
+      </div> 
+
+      <div class="links"> <a href="resetpass.php">Forgot Password</a> <a href="register.php">Signup</a> 
+
+      </div> 
 
       <div class="inputBox"> 
 
-       <input type="text" required> <i>Username</i> 
+       <input type="submit" value="Login" name="submit"> 
 
       </div> 
 
-      <div class="inputBox"> 
-
-       <input type="password" required> <i>Password</i> 
-
-      </div> 
-
-      <div class="links"> <a href="#">Forgot Password</a> <a href="#">Signup</a> 
-
-      </div> 
-
-      <div class="inputBox"> 
-
-       <input type="submit" value="Login"> 
-
-      </div> 
-
-     </div> 
+</form>
 
     </div> 
 
